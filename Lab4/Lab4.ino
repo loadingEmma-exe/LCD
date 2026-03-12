@@ -7,6 +7,9 @@
 #define SCREEN_WIDTH 128 // OLED display width, in pixels
 #define SCREEN_HEIGHT 64 // OLED display height, in pixels
 
+#define LOGO_WIDTH 8 // OLED display width, in pixels
+#define LOGO_HEIGHT 8 // OLED display height, in pixels
+
 //Color definitions
 #define BLACK 0x000000
 #define BLUE 0x0000FF
@@ -17,31 +20,40 @@
 #define YELLOW 0xFFFF00
 #define WHITE 0xFFFFF
 
-byte LArrow = {
+bool scrollDone = false; //Scroll check for text and bitmap.
+
+byte LArrow[8] = { //Robot's left arrow sprite.
+  0b00000000,
   0b00110000,
   0b00111100,
   0b01111110,
   0b00111100,
-  0b00110000
-}
-
-byte RArrow = {
   0b00110000,
+  0b00000000,
+  0b00000000
+};
+
+byte RArrow[8] = { //Robot's right arrow sprite.
+  0b00000000,
+  0b00001100,
   0b00111100,
   0b01111110,
   0b00111100,
-  0b00110000
-}
+  0b00001100,
+  0b00000000,
+  0b00000000
+};
 
- byte Character = {
+byte Character[8] = { //Custom sprite.
   0b00100100,
   0b00100100,
   0b01011010,
   0b10100101,
   0b10000001,
   0b01000010,
-  0b00111100
-}
+  0b00111100,
+  0b00000000
+};
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins). The pins for I2C are defined by the Wire-library.
 // On an arduino UNO: A4(SDA), A5(SCL) On an arduino MEGA 2560: 20(SDA), 21(SCL)
@@ -49,52 +61,64 @@ byte RArrow = {
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
-void drawbitmap(void){
-  display.clearDisplay();
+void writetext(int x) { 
+  String text = "Lab 4 by: Emma Raymond Austin Hoang";
 
-  display.drawBitmap(
-    (display.width() - LOGO_WIDTH) /2,
-    (display.height() - LOGO_HEIGHT /2,
-    logo_bmp, LOGO_WIDTH, LOGO_HEIGHT, 1);
-  display.display()
-  delay(1000);
+  display.setTextSize(2);
+  display.setTextColor(SSD1306_WHITE);
+  display.setTextWrap(false); //Ensures the text does not wrap around to the second line of the OLCD display.
+  display.setCursor(x, 0);
+  display.print(text);
+
 }
 
-void writetext(void){
-  display.clearDisplay();
-  display.setTextSize(2); //Draw 2X-scale text
-  display.setCursor(10,0);
-  dispaly.printIn(F("scroll"));
-  display.display(); //show initial text
-  delay(1000);
+void drawbitmap(int x) {
+  int bitmapY = 32;
+
+  display.drawBitmap(x, bitmapY, Character, 8, 8, SSD1306_WHITE); //Draws custom sprite.
 }
+
 
 void setup() {
-  // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    for(;;); // Don't proceed, loop forever
+  //SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
+  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    for (;;); //Don't proceed, loop forever
   }
-  // Show initial display buffer contents on the screen -- the library initializes this with an Adafruit splash screen.
-  display.display();
-  delay(2000); // Pause for 2 seconds
-  // Clear the buffer
+
   display.clearDisplay();
-  // Draw a single pixel in white
-  display.drawPixel(10, 10, SSD1306_WHITE);
-  // Show the display buffer on the screen. You MUST call display() after drawing commands to make them visible on screen!
   display.display();
 }
 
-void loop(){
-  drawbitmap();
-  writetext();
-}
+void loop() {
 
-void main(void){
-  LCD_init();
-  display_to_LCD(0x48);
-  display_to_LCD(0x45);
-  display_to_LCD(0x4C);
-  display_to_LCD(0x4C);
-  display_to_LCD(0x4F);
+  String text = "Lab 4 by: Emma Raymond Austin Hoang";
+  int textWidth = text.length() * 12;
+
+  if(!scrollDone) //Scrolls text and sprite once.
+    {
+      for (int i = 0; i < SCREEN_WIDTH + textWidth + LOGO_WIDTH; i++) { //Repeatedly draws text and sprite across the screen.
+      int textX = SCREEN_WIDTH - i;   // text moves left
+      int bitmapX = i - LOGO_WIDTH;   // bitmap moves right
+
+      display.clearDisplay();
+
+      writetext(textX);   // Scroll text
+      drawbitmap(bitmapX);   // Scroll sprite
+
+      display.display();
+      delay(0.5);
+    }
+    scrollDone = true; //Checks true, no longer scrolls.
+  }
+
+  display.clearDisplay();
+
+  int bitmapIdleX = (SCREEN_WIDTH - LOGO_WIDTH) / 2; //Centers the bitmap on the xaxis.
+  int bitmapIdleY = (SCREEN_HEIGHT - LOGO_HEIGHT) / 2; //Centers the bitmap on the y-axis
+
+  display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
+  display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
+  display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
+  display.display();
+
 }
