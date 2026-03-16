@@ -6,10 +6,7 @@
 
 #include <SoftwareSerial.h>
 
-#define BLUETOOTH_BAUD_RATE 38400 //could also be 9600
-#define Rx 2
-#define Tx 2
-
+#define BLUETOOTH_BAUD_RATE 9600 //could also be 9600
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins). The pins for I2C are defined by the Wire-library.
 // On an arduino UNO: A4(SDA), A5(SCL) On an arduino MEGA 2560: 20(SDA), 21(SCL)
@@ -69,7 +66,6 @@ byte Character[8] = { //Custom sprite.
 };
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
-SoftwareSerial bluetooth(Rx,Tx); //map recieve and transmit
 
 bool scrollDone = false; //Scroll check for text and bitmap.
 int bluetoothData;
@@ -82,7 +78,6 @@ void writetext(int x) {
   display.setTextWrap(false); //Ensures the text does not wrap around to the second line of the OLCD display.
   display.setCursor(x, 0);
   display.print(text);
-
 }
 
 void drawbitmap(int x) {
@@ -97,15 +92,14 @@ void setup() {
     for (;;); //Don't proceed, loop forever
   }
 
-  pinMode(Rx, INPUT);
-  pinMode(Tx, OUTPUT);
   pinMode(LEFT, OUTPUT);
   pinMode(RIGHT, OUTPUT);
 
   //bluetooth.begin(BLUETOOTH_BAUD_RATE);
 
   Serial.begin(9600);
-  Serial1.begin(BLUETOOTH_BAUD_RATE);
+  Serial2.begin(BLUETOOTH_BAUD_RATE);
+  Serial.println("Hello World");
 
   display.clearDisplay();
   display.display();
@@ -113,11 +107,11 @@ void setup() {
 
 String readCommand(){
   String asciiData = "";
-  if (bluetooth.available()){
+  if (Serial2.available()){
     display.clearDisplay();
-    while(bluetooth.available()){
+    while(Serial2.available()){
       //this is reading in the ascii values and you need to convert to numeric
-      bluetoothData = bluetooth.read();
+      bluetoothData = Serial2.read();
       //ignore the CR/LF values
       if(bluetoothData != 13 && bluetoothData != 10){
         asciiData += (char)bluetoothData;
@@ -174,16 +168,16 @@ void loop() {
     digitalWrite(RIGHT, HIGH);
     display.display();
 
-    if (Serial1.available()){
-      char receivedChar = Serial1.read(); // Read the incoming byte
-      Serial.print("Received on Serial1: ");
+    if (Serial2.available()){
+      char receivedChar = Serial2.read(); // Read the incoming byte
+      Serial.print("Received on Serial2: ");
       Serial.println(receivedChar); // Print it to the Serial Monitor
     }
-    if (Serial.available()) {
-      char sentChar = Serial.read(); // Read the incoming byte
+    if (Serial2.available()) {
+      char sentChar = Serial2.read(); // Read the incoming byte
       Serial.print("Sending to Serial1: ");
       Serial.println(sentChar);
-      Serial1.write(sentChar); // Send it out through Serial1
+      Serial2.write(sentChar); // Send it out through Serial1
     }
   }
 }
