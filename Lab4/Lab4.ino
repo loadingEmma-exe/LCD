@@ -10,6 +10,9 @@
 #define LOGO_WIDTH 8 // OLED display width, in pixels
 #define LOGO_HEIGHT 8 // OLED display height, in pixels
 
+#define LEFT 11
+#define RIGHT 12
+
 //Color definitions
 #define BLACK 0x000000
 #define BLUE 0x0000FF
@@ -55,6 +58,17 @@ byte Character[8] = { //Custom sprite.
   0b00000000
 };
 
+byte Empty[8] = { //Custom sprite.
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000,
+  0b00000000
+};
+
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins). The pins for I2C are defined by the Wire-library.
 // On an arduino UNO: A4(SDA), A5(SCL) On an arduino MEGA 2560: 20(SDA), 21(SCL)
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
@@ -85,12 +99,15 @@ void setup() {
     for (;;); //Don't proceed, loop forever
   }
 
+  pinMode(LEFT, OUTPUT);
+  pinMode(RIGHT, OUTPUT);
+
   display.clearDisplay();
   display.display();
 }
 
 void loop() {
-
+  delay(300);
   String text = "Lab 4 by: Emma Raymond Austin Hoang";
   int textWidth = text.length() * 12;
 
@@ -121,4 +138,19 @@ void loop() {
   display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
   display.display();
 
+  for(;;){
+    delay(1000);
+    display.clearDisplay();
+    digitalWrite(LEFT, LOW);
+    digitalWrite(RIGHT, LOW);
+    display.display();
+
+    delay(1000);
+
+    display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
+    display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
+    digitalWrite(LEFT, HIGH);
+    digitalWrite(RIGHT, HIGH);
+    display.display();
+  }
 }
