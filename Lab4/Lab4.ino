@@ -10,8 +10,8 @@
 #define LOGO_WIDTH 8 // OLED display width, in pixels
 #define LOGO_HEIGHT 8 // OLED display height, in pixels
 
-#define LEFT 11
-#define RIGHT 12
+#define LEFT 11 //Left LED connected to pin 11.
+#define RIGHT 12 //Right LED connected to pin 12. 
 
 //Color definitions
 #define BLACK 0x000000
@@ -153,4 +153,42 @@ void loop() {
     digitalWrite(RIGHT, HIGH);
     display.display();
   }
+
 }
+  /* Left blinker
+  delay(1000);
+  display.clearDisplay();
+  digitalWrite(LEFT, LOW);
+  digitalWrite(RIGHT, LOW);
+  display.display();
+
+  delay(1000);
+  display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
+  digitalWrite(LEFT, HIGH);
+  display.display();
+  /
+
+  /* Right blinker
+  delay(1000);
+  display.clearDisplay();
+  digitalWrite(LEFT, LOW);
+  digitalWrite(RIGHT, LOW);
+  display.display();
+
+  delay(1000);
+  display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
+  digitalWrite(RIGHT, HIGH);
+  display.display();
+  /
+
+  /* Idle - no blinkers active.
+  delay(1000);
+  display.clearDisplay();
+  digitalWrite(LEFT, LOW);
+  digitalWrite(RIGHT, LOW);
+  display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
+  display.display();
+  /
+
+  
+  
