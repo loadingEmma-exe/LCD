@@ -106,7 +106,8 @@ void setup() {
   display.display();
 }
 
-void loop() {
+void nameScroll()
+{
   delay(300);
   String text = "Lab 4 by: Emma Raymond Austin Hoang";
   int textWidth = text.length() * 12;
@@ -127,7 +128,10 @@ void loop() {
     }
     scrollDone = true; //Checks true, no longer scrolls.
   }
+}
 
+void loop() {
+  //nameScroll();
   display.clearDisplay();
 
   int bitmapIdleX = (SCREEN_WIDTH - LOGO_WIDTH) / 2; //Centers the bitmap on the xaxis.
@@ -139,56 +143,44 @@ void loop() {
   display.display();
 
   for(;;){
+    // delay(600); //Hazard blinkers logic.
+    // display.clearDisplay();
+    // digitalWrite(LEFT, LOW);
+    // digitalWrite(RIGHT, LOW);
+    // display.display();
+    // delay(600);
+    // display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
+    // display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
+    // digitalWrite(LEFT, HIGH);
+    // digitalWrite(RIGHT, HIGH);
+    // display.display();
+
+    // delay(600); //Left blinker
+    // display.clearDisplay();
+    // digitalWrite(LEFT, LOW);
+    // digitalWrite(RIGHT, LOW);
+    // display.display();
+    // delay(600);
+    // display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
+    // digitalWrite(LEFT, HIGH);
+    // display.display();
+
+    // delay(600); //Right blinker
+    // display.clearDisplay();
+    // digitalWrite(LEFT, LOW);
+    // digitalWrite(RIGHT, LOW);
+    // display.display();
+    // delay(600);
+    // display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
+    // digitalWrite(RIGHT, HIGH);
+    // display.display();
+
     delay(1000);
     display.clearDisplay();
     digitalWrite(LEFT, LOW);
     digitalWrite(RIGHT, LOW);
-    display.display();
-
-    delay(1000);
-
-    display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
-    display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
-    digitalWrite(LEFT, HIGH);
-    digitalWrite(RIGHT, HIGH);
+    display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
     display.display();
   }
-
 }
-  /* Left blinker
-  delay(1000);
-  display.clearDisplay();
-  digitalWrite(LEFT, LOW);
-  digitalWrite(RIGHT, LOW);
-  display.display();
 
-  delay(1000);
-  display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
-  digitalWrite(LEFT, HIGH);
-  display.display();
-  /
-
-  /* Right blinker
-  delay(1000);
-  display.clearDisplay();
-  digitalWrite(LEFT, LOW);
-  digitalWrite(RIGHT, LOW);
-  display.display();
-
-  delay(1000);
-  display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
-  digitalWrite(RIGHT, HIGH);
-  display.display();
-  /
-
-  /* Idle - no blinkers active.
-  delay(1000);
-  display.clearDisplay();
-  digitalWrite(LEFT, LOW);
-  digitalWrite(RIGHT, LOW);
-  display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
-  display.display();
-  /
-
-  
-  
