@@ -6,10 +6,8 @@
 
 #include <SoftwareSerial.h>
 
-#define BLUETOOTH_BAUD_RATE 38400 //could also be 9600
+#define BLUETOOTH_BAUD_RATE 38400
 
-// Declaration for an SSD1306 display connected to I2C (SDA, SCL pins). The pins for I2C are defined by the Wire-library.
-// On an arduino UNO: A4(SDA), A5(SCL) On an arduino MEGA 2560: 20(SDA), 21(SCL)
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C ///< See datasheet for Address; 0x3D for 128x64, 0x3C for 128x32
 
@@ -65,11 +63,13 @@ byte Character[8] = { //Custom sprite.
   0b00000000
 };
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET); //init display
 
 bool scrollDone = false; //Scroll check for text and bitmap.
-int bluetoothData;
 
+// Method: writetext
+// Input: x position
+// Print Lab Text across the screen
 void writetext(int x) { 
   String text = "Lab 4 by: Emma Raymond Austin Hoang";
 
@@ -80,12 +80,17 @@ void writetext(int x) {
   display.print(text);
 }
 
+// Method: drawbitmap
+// Input: x position
+// Draws bitmap, draws character
 void drawbitmap(int x) {
   int bitmapY = 32;
 
   display.drawBitmap(x, bitmapY, Character, 8, 8, SSD1306_WHITE); //Draws custom sprite.
 }
 
+// Method: setup
+// called once, initializes features
 void setup() {
   //SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
@@ -95,32 +100,16 @@ void setup() {
   pinMode(LEFT, OUTPUT);
   pinMode(RIGHT, OUTPUT);
 
-  //bluetooth.begin(BLUETOOTH_BAUD_RATE);
-
   Serial.begin(9600);
   Serial2.begin(BLUETOOTH_BAUD_RATE);
-  Serial.println("Hello World");
 
   display.clearDisplay();
   display.display();
 }
 
-String readCommand(){
-  String asciiData = "";
-  if (Serial2.available()){
-    display.clearDisplay();
-    while(Serial2.available()){
-      //this is reading in the ascii values and you need to convert to numeric
-      bluetoothData = Serial2.read();
-      //ignore the CR/LF values
-      if(bluetoothData != 13 && bluetoothData != 10){
-        asciiData += (char)bluetoothData;
-      }
-    }
-  }
-  return asciiData;
-}
 
+// Method: nameScroll
+// Scrolls text across the screen right to left, sprite is scrolling left to right
 void nameScroll()
 {
   delay(300);
@@ -145,9 +134,10 @@ void nameScroll()
   }
 }
 
+// Method: loop
+// loops continuously
 void loop() {
-  nameScroll();
-
+  nameScroll(); //displays text and sprite
   display.clearDisplay();
 
   int bitmapIdleX = (SCREEN_WIDTH - LOGO_WIDTH) / 2; //Centers the bitmap on the xaxis.
@@ -171,10 +161,14 @@ void loop() {
     digitalWrite(RIGHT, HIGH);
     display.display();
 
-    if (Serial2.available()){ //send to car
+    //BLINK LEFT OR RIGHT BASED OFF OF BLUETOOTH
+
+    if (Serial2.available()){ 
       char receivedChar = Serial2.read(); // Read the incoming byte
       Serial.print("Received on Serial2: ");
       Serial.println(receivedChar); // Print it to the Serial Monitor
+
+      //IF R BLINK RIGHT
       if(receivedChar == 'R'){
         delay(600); //Right blinker
         display.clearDisplay();
@@ -186,7 +180,7 @@ void loop() {
         display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
         digitalWrite(RIGHT, HIGH);
         display.display();
-      }
+      }//IF L BLINK L
       else if(receivedChar == 'L'){
         delay(600); //Left blinker
         display.clearDisplay();
