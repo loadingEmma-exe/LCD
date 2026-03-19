@@ -6,7 +6,7 @@
 
 #include <SoftwareSerial.h>
 
-#define BLUETOOTH_BAUD_RATE 9600 //could also be 9600
+#define BLUETOOTH_BAUD_RATE 38400 //could also be 9600
 
 // Declaration for an SSD1306 display connected to I2C (SDA, SCL pins). The pins for I2C are defined by the Wire-library.
 // On an arduino UNO: A4(SDA), A5(SCL) On an arduino MEGA 2560: 20(SDA), 21(SCL)
@@ -146,7 +146,7 @@ void nameScroll()
 }
 
 void loop() {
-  //nameScroll();
+  nameScroll();
 
   display.clearDisplay();
 
@@ -175,7 +175,7 @@ void loop() {
       char receivedChar = Serial2.read(); // Read the incoming byte
       Serial.print("Received on Serial2: ");
       Serial.println(receivedChar); // Print it to the Serial Monitor
-      if(receivedChar == 'R' | 'r'){
+      if(receivedChar == 'R'){
         delay(600); //Right blinker
         display.clearDisplay();
         digitalWrite(LEFT, LOW);
@@ -183,10 +183,11 @@ void loop() {
         display.display();
         delay(600);
         display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
+        display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
         digitalWrite(RIGHT, HIGH);
         display.display();
       }
-      if(receivedChar == 'L' | 'l'){
+      else if(receivedChar == 'L'){
         delay(600); //Left blinker
         display.clearDisplay();
         digitalWrite(LEFT, LOW);
@@ -194,6 +195,7 @@ void loop() {
         display.display();
         delay(600);
         display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
+        display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
         digitalWrite(LEFT, HIGH);
         display.display();
       }
