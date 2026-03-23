@@ -17,8 +17,10 @@
 #define LOGO_WIDTH 8 // OLED display width, in pixels
 #define LOGO_HEIGHT 8 // OLED display height, in pixels
 
-#define LEFT 11
-#define RIGHT 12
+#define LEFTREAR 31
+#define LEFTFRONT 49
+#define RIGHTREAR 37
+#define RIGHTFRONT 43
 
 //Color definitions
 #define BLACK 0x000000
@@ -97,8 +99,10 @@ void setup() {
     for (;;); //Don't proceed, loop forever
   }
 
-  pinMode(LEFT, OUTPUT);
-  pinMode(RIGHT, OUTPUT);
+  pinMode(LEFTFRONT, OUTPUT);
+  pinMode(RIGHTFRONT, OUTPUT);
+  pinMode(LEFTREAR, OUTPUT);
+  pinMode(RIGHTREAR, OUTPUT);
 
   Serial.begin(9600);
   Serial2.begin(BLUETOOTH_BAUD_RATE);
@@ -151,14 +155,18 @@ void loop() {
   for(;;){
     delay(600); //Hazard blinkers logic.
     display.clearDisplay();
-    digitalWrite(LEFT, LOW);
-    digitalWrite(RIGHT, LOW);
+    digitalWrite(LEFTREAR, LOW);
+    digitalWrite(RIGHTREAR, LOW);
+    digitalWrite(LEFTFRONT, LOW);
+    digitalWrite(RIGHTFRONT, LOW);
     display.display();
     delay(600);
     display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
     display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
-    digitalWrite(LEFT, HIGH);
-    digitalWrite(RIGHT, HIGH);
+    digitalWrite(LEFTREAR, HIGH);
+    digitalWrite(RIGHTREAR, HIGH);
+    digitalWrite(LEFTFRONT, HIGH);
+    digitalWrite(RIGHTFRONT, HIGH);
     display.display();
 
     //BLINK LEFT OR RIGHT BASED OFF OF BLUETOOTH
@@ -172,25 +180,32 @@ void loop() {
       if(receivedChar == 'R'){
         delay(600); //Right blinker
         display.clearDisplay();
-        digitalWrite(LEFT, LOW);
-        digitalWrite(RIGHT, LOW);
+        digitalWrite(LEFTREAR, LOW);
+        digitalWrite(RIGHTREAR, LOW);
+        digitalWrite(LEFTFRONT, LOW);
+        digitalWrite(RIGHTFRONT, LOW);
         display.display();
         delay(600);
         display.drawBitmap(4, bitmapIdleY, RArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's right arrow
         display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
-        digitalWrite(RIGHT, HIGH);
+        digitalWrite(RIGHTREAR, HIGH);
+        digitalWrite(RIGHTFRONT, HIGH);
         display.display();
+
       }//IF L BLINK L
       else if(receivedChar == 'L'){
         delay(600); //Left blinker
         display.clearDisplay();
-        digitalWrite(LEFT, LOW);
-        digitalWrite(RIGHT, LOW);
+        digitalWrite(LEFTREAR, LOW);
+        digitalWrite(RIGHTREAR, LOW);
+        digitalWrite(LEFTFRONT, LOW);
+        digitalWrite(RIGHTFRONT, LOW);
         display.display();
         delay(600);
         display.drawBitmap(120, bitmapIdleY, LArrow, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Robot's left arrow
         display.drawBitmap(bitmapIdleX, bitmapIdleY, Character, LOGO_WIDTH, LOGO_HEIGHT, SSD1306_WHITE); //Idle sprite
-        digitalWrite(LEFT, HIGH);
+        digitalWrite(LEFTREAR, HIGH);
+        digitalWrite(LEFTFRONT, HIGH);
         display.display();
       }
     }
